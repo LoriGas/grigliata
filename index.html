@@ -1,209 +1,206 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grigliata Casa Gas</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #fef7f0;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-        form {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            display: inline-block;
-            max-width: 400px;
-        }
-        input, select, button {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 1em;
-        }
-        select[multiple] {
-            height: 120px;
-        }
-        button {
-            background-color: #e67300;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #cc6600;
-        }
-        h1 {
-            color: #e67300;
-        }
-        .lista {
-            margin-top: 30px;
-            text-align: left;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        .card {
-            background: #fff;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .charts {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 30px;
-            flex-wrap: wrap;
-        }
-        canvas {
-            background: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-        }
-        .delete-btn {
-            background: red;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Grigliata Casa Gas - Con Firebase</title>
+
+<!-- Stili base -->
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
+  h1 { text-align: center; }
+  .section { margin-bottom: 20px; }
+  .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+  label { display: flex; align-items: center; gap: 5px; }
+  ul { padding-left: 20px; }
+  li { margin-bottom: 10px; }
+  button { margin-left: 10px; cursor: pointer; }
+  @media (max-width: 480px) {
+    .checkbox-group { flex-direction: column; }
+  }
+</style>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
-    <h1>Grigliata Casa Gas 🍖</h1>
-    <form id="grigliataForm">
-        <input type="text" id="nome" placeholder="Il tuo nome" required>
-        <select id="cibo" multiple required>
-            <option>Hamburger</option>
-            <option>Salamelle</option>
-            <option>Braciole</option>
-            <option>Wurstel</option>
-            <option>Salsiccia</option>
-            <option>Coppa</option>
-            <option>Pancetta</option>
-        </select>
-        <select id="bevanda" multiple required>
-            <option>Acqua</option>
-            <option>Coca-Cola</option>
-            <option>Spritz</option>
-            <option>Birra</option>
-            <option>Estathé</option>
-            <option>Gin Lemon</option>
-        </select>
-        <button type="submit">Partecipa</button>
-    </form>
 
-    <div class="lista" id="listaPartecipanti">
-        <h2>Partecipanti</h2>
-    </div>
+<h1>Grigliata Casa Gas</h1>
 
-    <div class="charts">
-        <div>
-            <h3>Cibi</h3>
-            <canvas id="chartCibi" width="200" height="200"></canvas>
-        </div>
-        <div>
-            <h3>Bevande</h3>
-            <canvas id="chartBevande" width="200" height="200"></canvas>
-        </div>
-    </div>
+<div class="section">
+  <label>Nome: <input type="text" id="nome" autocomplete="off" /></label>
+</div>
 
-    <script>
-        let datiCibi = JSON.parse(localStorage.getItem('datiCibi')) || {"Hamburger": 0, "Salamelle": 0, "Braciole": 0, "Wurstel": 0, "Salsiccia": 0, "Coppa": 0, "Pancetta": 0};
-        let datiBevande = JSON.parse(localStorage.getItem('datiBevande')) || {"Acqua": 0, "Coca-Cola": 0, "Spritz": 0, "Birra": 0, "Estathé": 0, "Gin Lemon": 0};
-        let partecipanti = JSON.parse(localStorage.getItem('partecipanti')) || [];
+<div class="section">
+  <h3>Cibi</h3>
+  <div id="cibi" class="checkbox-group"></div>
+</div>
 
-        const chartCibi = new Chart(document.getElementById('chartCibi'), {
-            type: 'pie',
-            data: {
-                labels: Object.keys(datiCibi),
-                datasets: [{
-                    data: Object.values(datiCibi),
-                    backgroundColor: ['#ff9999','#ffcc99','#99ff99','#9999ff','#ffb3e6','#c2c2f0','#ffccff']
-                }]
-            }
-        });
+<div class="section">
+  <h3>Bevande</h3>
+  <div id="bevande" class="checkbox-group"></div>
+</div>
 
-        const chartBevande = new Chart(document.getElementById('chartBevande'), {
-            type: 'pie',
-            data: {
-                labels: Object.keys(datiBevande),
-                datasets: [{
-                    data: Object.values(datiBevande),
-                    backgroundColor: ['#66b3ff','#ffb366','#b366ff','#66ffb3','#ffd966','#ff6666']
-                }]
-            }
-        });
+<button onclick="aggiungiPartecipante()">Aggiungi</button>
 
-        function aggiornaGrafici() {
-            chartCibi.data.datasets[0].data = Object.values(datiCibi);
-            chartBevande.data.datasets[0].data = Object.values(datiBevande);
-            chartCibi.update();
-            chartBevande.update();
-        }
+<h2>Lista partecipanti</h2>
+<ul id="lista"></ul>
 
-        function salvaDati() {
-            localStorage.setItem('datiCibi', JSON.stringify(datiCibi));
-            localStorage.setItem('datiBevande', JSON.stringify(datiBevande));
-            localStorage.setItem('partecipanti', JSON.stringify(partecipanti));
-        }
+<canvas id="graficoCibi" width="400" height="200"></canvas>
+<canvas id="graficoBevande" width="400" height="200"></canvas>
 
-        function mostraPartecipanti() {
-            const lista = document.getElementById('listaPartecipanti');
-            lista.innerHTML = '<h2>Partecipanti</h2>';
-            partecipanti.forEach((p, index) => {
-                const card = document.createElement('div');
-                card.classList.add('card');
-                card.innerHTML = `<span><strong>${p.nome}</strong> - Cibi: ${p.cibi.join(', ')} | Bevande: ${p.bevande.join(', ')}</span>`;
-                const delBtn = document.createElement('button');
-                delBtn.textContent = '❌';
-                delBtn.classList.add('delete-btn');
-                delBtn.onclick = () => {
-                    p.cibi.forEach(c => datiCibi[c]--);
-                    p.bevande.forEach(b => datiBevande[b]--);
-                    partecipanti.splice(index, 1);
-                    salvaDati();
-                    aggiornaGrafici();
-                    mostraPartecipanti();
-                };
-                card.appendChild(delBtn);
-                lista.appendChild(card);
-            });
-        }
+<script>
+  // Config Firebase (metti qui la tua config)
+  const firebaseConfig = {
+    apiKey: "AIzaSyAMZ6Kuxh0e4wD8mwJWQeWvVaBbeYtYhxo",
+    authDomain: "grigliata-e3c22.firebaseapp.com",
+    databaseURL: "https://grigliata-e3c22-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "grigliata-e3c22",
+    storageBucket: "grigliata-e3c22.appspot.com",
+    messagingSenderId: "403555200046",
+    appId: "1:403555200046:web:3074852ad1ae6689a083bf",
+    measurementId: "G-K65LG7VYCW"
+  };
 
-        document.getElementById('grigliataForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const nome = document.getElementById('nome').value;
-            const cibiSelezionati = Array.from(document.getElementById('cibo').selectedOptions).map(o => o.value);
-            const bevandeSelezionate = Array.from(document.getElementById('bevanda').selectedOptions).map(o => o.value);
+  // Inizializza Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
 
-            cibiSelezionati.forEach(c => datiCibi[c]++);
-            bevandeSelezionate.forEach(b => datiBevande[b]++);
-            partecipanti.push({ nome, cibi: cibiSelezionati, bevande: bevandeSelezionate });
+  // Opzioni
+  const opzioniCibi = ["Hamburger", "Salamelle", "Braciole", "Wurstel", "Salsiccia", "Coppa", "Pancetta"];
+  const opzioniBevande = ["Acqua", "CocaCola", "Spritz", "Birra", "Estathe", "Gin Lemon"];
 
-            salvaDati();
-            aggiornaGrafici();
-            mostraPartecipanti();
-            this.reset();
-        });
+  // Crea checkbox in pagina
+  function creaCheckbox(containerId, opzioni) {
+    const container = document.getElementById(containerId);
+    opzioni.forEach(opt => {
+      const label = document.createElement('label');
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = opt;
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(opt));
+      container.appendChild(label);
+    });
+  }
 
-        mostraPartecipanti();
-        aggiornaGrafici();
-    </script>
+  creaCheckbox('cibi', opzioniCibi);
+  creaCheckbox('bevande', opzioniBevande);
+
+  // Riferimenti DOM
+  const listaEl = document.getElementById('lista');
+  const nomeInput = document.getElementById('nome');
+
+  // Grafici
+  let graficoCibi, graficoBevande;
+
+  // Aggiunge partecipante nel DB
+  function aggiungiPartecipante() {
+    const nome = nomeInput.value.trim();
+    if (!nome) {
+      alert('Inserisci un nome');
+      return;
+    }
+    const cibiSelezionati = Array.from(document.querySelectorAll('#cibi input:checked')).map(cb => cb.value);
+    const bevandeSelezionate = Array.from(document.querySelectorAll('#bevande input:checked')).map(cb => cb.value);
+
+    if(cibiSelezionati.length === 0 && bevandeSelezionate.length === 0) {
+      alert('Seleziona almeno un cibo o una bevanda');
+      return;
+    }
+
+    // Crea nuovo partecipante con ID univoco
+    const newRef = database.ref('partecipanti').push();
+    newRef.set({
+      nome,
+      cibi: cibiSelezionati,
+      bevande: bevandeSelezionate
+    });
+
+    // Pulisci form
+    nomeInput.value = '';
+    document.querySelectorAll('#cibi input:checked').forEach(cb => cb.checked = false);
+    document.querySelectorAll('#bevande input:checked').forEach(cb => cb.checked = false);
+  }
+
+  // Aggiorna lista e grafici leggendo da DB in tempo reale
+  function aggiornaDati(snapshot) {
+    const dati = snapshot.val() || {};
+    listaEl.innerHTML = '';
+
+    const partecipanti = Object.entries(dati).map(([id, p]) => ({ id, ...p }));
+
+    // Crea lista
+    partecipanti.forEach(({id, nome, cibi, bevande}) => {
+      const li = document.createElement('li');
+      li.textContent = `${nome} - Cibi: ${cibi.join(', ')} - Bevande: ${bevande.join(', ')}`;
+
+      const btn = document.createElement('button');
+      btn.textContent = 'Rimuovi';
+      btn.onclick = () => {
+        database.ref('partecipanti/' + id).remove();
+      };
+      li.appendChild(btn);
+      listaEl.appendChild(li);
+    });
+
+    // Conta per grafici
+    const contaCibi = {};
+    const contaBevande = {};
+
+    partecipanti.forEach(({cibi, bevande}) => {
+      cibi.forEach(c => contaCibi[c] = (contaCibi[c] || 0) + 1);
+      bevande.forEach(b => contaBevande[b] = (contaBevande[b] || 0) + 1);
+    });
+
+    aggiornaGrafici(contaCibi, contaBevande);
+  }
+
+  // Funzione per aggiornare i grafici
+  function aggiornaGrafici(contaCibi, contaBevande) {
+    const coloriCibi = generaColori(Object.keys(contaCibi).length);
+    const coloriBevande = generaColori(Object.keys(contaBevande).length);
+
+    if(graficoCibi) graficoCibi.destroy();
+    if(graficoBevande) graficoBevande.destroy();
+
+    graficoCibi = new Chart(document.getElementById('graficoCibi'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(contaCibi),
+        datasets: [{
+          data: Object.values(contaCibi),
+          backgroundColor: coloriCibi
+        }]
+      }
+    });
+
+    graficoBevande = new Chart(document.getElementById('graficoBevande'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(contaBevande),
+        datasets: [{
+          data: Object.values(contaBevande),
+          backgroundColor: coloriBevande
+        }]
+      }
+    });
+  }
+
+  // Genera colori casuali
+  function generaColori(n) {
+    return Array.from({ length: n }, () => `hsl(${Math.random() * 360}, 70%, 60%)`);
+  }
+
+  // Ascolta cambiamenti in realtime sul DB
+  database.ref('partecipanti').on('value', aggiornaDati);
+
+</script>
+
 </body>
 </html>
