@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizza la Grigliata</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fef7f0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: inline-block;
+            max-width: 400px;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        button {
+            background-color: #e67300;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #cc6600;
+        }
+        h1 {
+            color: #e67300;
+        }
+        .lista {
+            margin-top: 30px;
+            text-align: left;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .card {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Organizza la Grigliata 🍖</h1>
+    <form id="grigliataForm">
+        <input type="text" id="nome" placeholder="Il tuo nome" required>
+        <select id="cibo" required>
+            <option value="">-- Seleziona il cibo preferito --</option>
+            <option>Carne</option>
+            <option>Pesce</option>
+            <option>Verdure</option>
+            <option>Formaggi</option>
+        </select>
+        <select id="bevanda" required>
+            <option value="">-- Seleziona la bevanda preferita --</option>
+            <option>Birra</option>
+            <option>Vino</option>
+            <option>Acqua</option>
+            <option>Analcolici</option>
+        </select>
+        <button type="submit">Partecipa</button>
+    </form>
+
+    <div class="lista" id="listaPartecipanti">
+        <h2>Partecipanti</h2>
+    </div>
+
+    <script>
+        const form = document.getElementById('grigliataForm');
+        const lista = document.getElementById('listaPartecipanti');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nome = document.getElementById('nome').value;
+            const cibo = document.getElementById('cibo').value;
+            const bevanda = document.getElementById('bevanda').value;
+
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.innerHTML = `<strong>${nome}</strong> - Cibo: ${cibo}, Bevanda: ${bevanda}`;
+
+            lista.appendChild(card);
+
+            form.reset();
+        });
+    </script>
+</body>
+</html>
