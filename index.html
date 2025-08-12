@@ -3,170 +3,139 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grigliata Casa Gas - Con Firebase</title>
+<title>Grigliata Casa Gas - Con Firebase (v2)</title>
 
 <!-- Google Font -->
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet" />
 
 <style>
   /* Reset base */
-  * {
-    box-sizing: border-box;
+  * { box-sizing: border-box; }
+  :root{
+    --brand:#27ae60;
+    --brand-2:#2ecc71;
+    --ink:#2c3e50;
+    --bg:#f7faf9;
+    --card:#ffffff;
   }
   body {
     font-family: 'Montserrat', sans-serif;
-    background: #f9f9f9;
+    background: radial-gradient(1200px 600px at 20% -10%, #e8fff2 0%, transparent 60%),
+                radial-gradient(900px 500px at 120% 10%, #e7f6ff 0%, transparent 60%),
+                var(--bg);
     margin: 0;
-    padding: 0 15px 40px;
+    padding: 0 18px 48px;
     color: #333;
-    max-width: 700px;
+    max-width: 960px;
     margin-left: auto;
     margin-right: auto;
   }
+  header{
+    text-align:center;
+    padding: 36px 10px 6px;
+  }
   h1 {
-    text-align: center;
-    margin-top: 30px;
-    color: #2c3e50;
-    font-weight: 600;
-    font-size: 2.8rem;
-    letter-spacing: 1px;
+    margin: 0;
+    color: var(--ink);
+    font-weight: 800;
+    font-size: clamp(2rem, 4vw, 3rem);
+    letter-spacing: .5px;
   }
+  .subtitle{
+    margin-top: 6px;
+    color:#5c6b76;
+    font-weight:600;
+    font-size: .95rem;
+  }
+
   h2 {
-    border-bottom: 3px solid #27ae60;
+    border-bottom: 3px solid var(--brand);
     padding-bottom: 8px;
-    color: #27ae60;
-    font-weight: 600;
-    margin-top: 40px;
+    color: var(--brand);
+    font-weight: 700;
+    margin-top: 34px;
   }
-  h3 {
-    color: #27ae60;
-    margin-bottom: 10px;
+  h3 { color: var(--brand); margin-bottom: 12px; }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
   }
 
   .section {
-    background: #fff;
-    padding: 20px 25px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgb(39 174 96 / 0.1);
-    margin-bottom: 30px;
+    background: var(--card);
+    padding: 22px 24px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(39, 174, 96, 0.12);
+    border: 1px solid rgba(39,174,96,.12);
+    backdrop-filter: blur(2px);
+    margin-bottom: 22px;
   }
 
-  label {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-    user-select: none;
-    font-weight: 500;
-    color: #444;
-  }
-  label input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: #27ae60;
-    cursor: pointer;
-  }
+  label[for="nome"]{ font-weight:700; color:#274b35; margin-bottom:8px; display:block; }
   #nome {
     width: 100%;
-    padding: 12px 15px;
-    font-size: 1.1rem;
-    border: 2px solid #27ae60;
-    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 1.05rem;
+    border: 2px solid var(--brand);
+    border-radius: 12px;
     outline-offset: 2px;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.25s ease, box-shadow .2s ease;
+    box-shadow: 0 1px 0 rgba(0,0,0,.02) inset;
   }
-  #nome:focus {
-    border-color: #2ecc71;
-  }
+  #nome:focus { border-color: var(--brand-2); box-shadow: 0 0 0 6px rgba(46,204,113,.12); }
 
   .checkbox-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
+    display: flex; flex-wrap: wrap; gap: 12px; 
   }
   .checkbox-group label {
-    background: #e6f5ea;
-    padding: 8px 15px;
-    border-radius: 30px;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background-color 0.3s ease;
+    background: #edfff3;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-weight: 600; font-size: .98rem;
+    transition: all 0.25s ease;
+    border:1px solid rgba(39,174,96,.18);
   }
-  .checkbox-group label:hover {
-    background-color: #c8e6c9;
-  }
+  .checkbox-group label:hover { background-color: #d9f7e3; transform: translateY(-1px); }
+  .checkbox-group input[type="checkbox"]{ width: 18px; height: 18px; accent-color: var(--brand); cursor: pointer; }
 
+  .actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
   button {
-    background-color: #27ae60;
-    color: white;
-    border: none;
-    padding: 14px 30px;
-    font-weight: 600;
-    font-size: 1.2rem;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 6px 12px rgb(39 174 96 / 0.5);
-    transition: background-color 0.3s ease;
-    display: block;
-    margin: 0 auto 40px;
-    width: fit-content;
+    background: linear-gradient(180deg, var(--brand), #1f9b54);
+    color: white; border: none; padding: 14px 26px;
+    font-weight: 700; font-size: 1.05rem; letter-spacing:.2px;
+    border-radius: 999px; cursor: pointer;
+    box-shadow: 0 12px 20px rgba(39, 174, 96, 0.35);
+    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
   }
-  button:hover {
-    background-color: #2ecc71;
-  }
+  button:hover { transform: translateY(-1px); filter: brightness(1.02); box-shadow: 0 14px 26px rgba(39,174,96,.45); }
 
-  ul#lista {
-    list-style-type: none;
-    padding-left: 0;
-  }
+  ul#lista { list-style-type: none; padding-left: 0; }
   ul#lista li {
-    background: #fff;
-    padding: 15px 20px;
-    margin-bottom: 12px;
-    border-radius: 10px;
-    box-shadow: 0 3px 8px rgb(0 0 0 / 0.07);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    font-size: 1rem;
+    background: var(--card);
+    padding: 14px 16px; margin-bottom: 10px; border-radius: 14px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    display: grid; grid-template-columns: 1fr auto; gap:12px; align-items:center;
+    font-weight: 500; font-size: .98rem; border:1px solid rgba(0,0,0,.06);
   }
-  ul#lista li button {
-    background-color: #e74c3c;
-    box-shadow: none;
-    padding: 8px 14px;
-    border-radius: 20px;
-    font-weight: 600;
-    font-size: 0.9rem;
-    transition: background-color 0.25s ease;
-  }
-  ul#lista li button:hover {
-    background-color: #c0392b;
-  }
+  ul#lista li .pill{ background:#eef8f1; padding:6px 10px; border-radius:999px; font-size:.85rem; font-weight:700; color:#2b7d4c; }
+  ul#lista li button { background-color: #e74c3c; box-shadow: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; }
+  ul#lista li button:hover { background-color: #c0392b; }
 
-  canvas {
-    display: block;
-    max-width: 100%;
-    margin: 20px auto 40px;
+  .charts{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 18px;
   }
+  .chart-card{ background:var(--card); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:16px; box-shadow:0 10px 24px rgba(0,0,0,.06); }
+  .chart-title{ font-weight:700; color:#234; margin: 4px 0 8px; text-align:center; }
+
+  canvas { display:block; max-width: 100%; margin: 0 auto; }
 
   /* Responsive */
-  @media (max-width: 480px) {
-    .checkbox-group {
-      flex-direction: column;
-      gap: 10px;
-    }
-    button {
-      width: 100%;
-    }
-    ul#lista li {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    ul#lista li button {
-      align-self: flex-end;
-    }
+  @media (max-width: 760px) {
+    .grid, .charts{ grid-template-columns: 1fr; }
+    button { width: 100%; }
+    ul#lista li { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -180,30 +149,46 @@
 </head>
 <body>
 
-<h1>Grigliata Casa Gas</h1>
+<header>
+  <h1>Grigliata Casa Gas</h1>
+  <div class="subtitle">Seleziona cosa porti, aggiungiti alla lista e guarda le preferenze del gruppo.</div>
+</header>
 
 <div class="section">
-  <label for="nome">Nome:</label>
+  <label for="nome">Nome</label>
   <input type="text" id="nome" autocomplete="off" placeholder="Inserisci il tuo nome" />
 </div>
 
-<div class="section">
-  <h3>Cibi</h3>
-  <div id="cibi" class="checkbox-group"></div>
+<div class="grid">
+  <div class="section">
+    <h3>Cibi</h3>
+    <div id="cibi" class="checkbox-group"></div>
+  </div>
+
+  <div class="section">
+    <h3>Bevande</h3>
+    <div id="bevande" class="checkbox-group"></div>
+  </div>
 </div>
 
-<div class="section">
-  <h3>Bevande</h3>
-  <div id="bevande" class="checkbox-group"></div>
+<div class="section actions">
+  <button onclick="aggiungiPartecipante()">Aggiungi</button>
+  <span class="pill" id="totPartecipanti">0 partecipanti</span>
 </div>
-
-<button onclick="aggiungiPartecipante()">Aggiungi</button>
 
 <h2>Lista partecipanti</h2>
 <ul id="lista"></ul>
 
-<canvas id="graficoCibi" width="400" height="200"></canvas>
-<canvas id="graficoBevande" width="400" height="200"></canvas>
+<div class="charts">
+  <div class="chart-card">
+    <div class="chart-title">Cibi</div>
+    <canvas id="graficoCibi" width="400" height="400" aria-label="Grafico a torta cibi" role="img"></canvas>
+  </div>
+  <div class="chart-card">
+    <div class="chart-title">Bevande</div>
+    <canvas id="graficoBevande" width="400" height="400" aria-label="Grafico a torta bevande" role="img"></canvas>
+  </div>
+</div>
 
 <script>
   // Config Firebase (metti qui la tua config)
@@ -222,21 +207,21 @@
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
 
-  // Opzioni
+  // Opzioni (Gin Lemon -> Gin; aggiunto Apertass)
   const opzioniCibi = ["Hamburger", "Salamelle", "Braciole", "Wurstel", "Salsiccia", "Coppa", "Pancetta"];
-  const opzioniBevande = ["Acqua", "CocaCola", "Spritz", "Birra", "Estathe", "Gin Lemon"];
+  const opzioniBevande = ["Acqua", "CocaCola", "Spritz", "Birra", "Estathe", "Gin", "Apertass"]; // aggiornato
 
   // Crea checkbox in pagina
   function creaCheckbox(containerId, opzioni) {
     const container = document.getElementById(containerId);
-    container.innerHTML = ''; // reset in caso
+    container.innerHTML = '';
     opzioni.forEach(opt => {
       const label = document.createElement('label');
       const checkbox = document.createElement('input');
       checkbox.type = 'checkbox';
       checkbox.value = opt;
       label.appendChild(checkbox);
-      label.appendChild(document.createTextNode(opt));
+      label.appendChild(document.createTextNode(' ' + opt));
       container.appendChild(label);
     });
   }
@@ -247,17 +232,21 @@
   // Riferimenti DOM
   const listaEl = document.getElementById('lista');
   const nomeInput = document.getElementById('nome');
+  const totPartecipantiEl = document.getElementById('totPartecipanti');
 
   // Grafici
   let graficoCibi, graficoBevande;
 
+  // Palette colori per le torte
+  const palette = [
+    '#27ae60', '#2ecc71', '#16a085', '#1abc9c', '#3498db', '#9b59b6', '#e67e22', '#f1c40f', '#e74c3c', '#8e44ad', '#2c3e50', '#95a5a6'
+  ];
+
   // Aggiunge partecipante nel DB
   function aggiungiPartecipante() {
     const nome = nomeInput.value.trim();
-    if (!nome) {
-      alert('Inserisci un nome');
-      return;
-    }
+    if (!nome) { alert('Inserisci un nome'); return; }
+
     const cibiSelezionati = Array.from(document.querySelectorAll('#cibi input:checked')).map(cb => cb.value);
     const bevandeSelezionate = Array.from(document.querySelectorAll('#bevande input:checked')).map(cb => cb.value);
 
@@ -266,13 +255,8 @@
       return;
     }
 
-    // Crea nuovo partecipante con ID univoco
     const newRef = database.ref('partecipanti').push();
-    newRef.set({
-      nome,
-      cibi: cibiSelezionati,
-      bevande: bevandeSelezionate
-    });
+    newRef.set({ nome, cibi: cibiSelezionati, bevande: bevandeSelezionate });
 
     // Pulisci form
     nomeInput.value = '';
@@ -286,17 +270,17 @@
     listaEl.innerHTML = '';
 
     const partecipanti = Object.entries(dati).map(([id, p]) => ({ id, ...p }));
+    totPartecipantiEl.textContent = `${partecipanti.length} partecipante${partecipanti.length !== 1 ? 'i' : ''}`;
 
     // Crea lista
-    partecipanti.forEach(({id, nome, cibi, bevande}) => {
+    partecipanti.forEach(({id, nome, cibi = [], bevande = []}) => {
       const li = document.createElement('li');
-      li.textContent = `${nome} - Cibi: ${cibi.join(', ')} - Bevande: ${bevande.join(', ')}`;
-
+      const info = document.createElement('div');
+      info.textContent = `${nome} — Cibi: ${cibi.join(', ') || '—'} — Bevande: ${bevande.join(', ') || '—'}`;
       const btn = document.createElement('button');
       btn.textContent = 'Rimuovi';
-      btn.onclick = () => {
-        database.ref('partecipanti/' + id).remove();
-      };
+      btn.onclick = () => database.ref('partecipanti/' + id).remove();
+      li.appendChild(info);
       li.appendChild(btn);
       listaEl.appendChild(li);
     });
@@ -304,57 +288,48 @@
     // Conta per grafici
     const contaCibi = {};
     const contaBevande = {};
-    partecipanti.forEach(({cibi, bevande}) => {
-      cibi.forEach(cibo => {
-        contaCibi[cibo] = (contaCibi[cibo] || 0) + 1;
-      });
-      bevande.forEach(bevanda => {
-        contaBevande[bevanda] = (contaBevande[bevanda] || 0) + 1;
-      });
+    partecipanti.forEach(({cibi = [], bevande = []}) => {
+      cibi.forEach(cibo => { contaCibi[cibo] = (contaCibi[cibo] || 0) + 1; });
+      bevande.forEach(bevanda => { contaBevande[bevanda] = (contaBevande[bevanda] || 0) + 1; });
     });
 
-    aggiornaGrafico(graficoCibi, contaCibi, 'Cibi');
-    aggiornaGrafico(graficoBevande, contaBevande, 'Bevande');
+    graficoCibi = aggiornaGraficoTorta(graficoCibi, 'graficoCibi', contaCibi, 'Cibi');
+    graficoBevande = aggiornaGraficoTorta(graficoBevande, 'graficoBevande', contaBevande, 'Bevande');
   }
 
-  // Funzione per creare o aggiornare un grafico
-  function aggiornaGrafico(chart, dataObj, label) {
+  // Crea/Aggiorna grafico a torta
+  function aggiornaGraficoTorta(chart, canvasId, dataObj, label) {
     const labels = Object.keys(dataObj);
     const data = Object.values(dataObj);
+    const bgColors = labels.map((_, i) => palette[i % palette.length]);
+
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
     if (!chart) {
-      const ctx = label === 'Cibi' ? document.getElementById('graficoCibi').getContext('2d') : document.getElementById('graficoBevande').getContext('2d');
       return new Chart(ctx, {
-        type: 'bar',
+        type: 'pie',
         data: {
           labels,
-          datasets: [{
-            label: label,
-            data,
-            backgroundColor: '#27ae60',
-            borderRadius: 6,
-            maxBarThickness: 40,
-          }]
+          datasets: [{ label, data, backgroundColor: bgColors }]
         },
         options: {
           responsive: true,
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 1
-              }
-            }
-          },
           plugins: {
-            legend: {
-              display: false
-            }
+            legend: { position: 'bottom' },
+            tooltip: { callbacks: { footer: (items) => {
+              // mostra percentuale nella tooltip
+              const sum = data.reduce((a,b)=>a+b,0) || 1;
+              const value = items[0].parsed;
+              const perc = ((value / sum) * 100).toFixed(1) + '%';
+              return 'Quota: ' + perc;
+            }}}
           }
         }
       });
     } else {
       chart.data.labels = labels;
       chart.data.datasets[0].data = data;
+      chart.data.datasets[0].backgroundColor = bgColors;
       chart.update();
       return chart;
     }
@@ -362,8 +337,9 @@
 
   // Setup listener realtime
   database.ref('partecipanti').on('value', snapshot => {
-    graficoCibi = aggiornaGrafico(graficoCibi, {}, 'Cibi');
-    graficoBevande = aggiornaGrafico(graficoBevande, {}, 'Bevande');
+    // inizializza i grafici se non presenti
+    if (!graficoCibi) graficoCibi = aggiornaGraficoTorta(null, 'graficoCibi', {}, 'Cibi');
+    if (!graficoBevande) graficoBevande = aggiornaGraficoTorta(null, 'graficoBevande', {}, 'Bevande');
     aggiornaDati(snapshot);
   });
 </script>
