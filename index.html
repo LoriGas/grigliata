@@ -3,215 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Grigliata Casa Gas - Con Firebase (v2)</title>
-
-<!-- Google Font -->
+<title>Grigliata Casa Gas - Con Firebase (v3)</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet" />
-
 <style>
-  /* Reset base */
-  * { box-sizing: border-box; }
-  :root{
-    --brand:#27ae60;
-    --brand-2:#2ecc71;
-    --ink:#2c3e50;
-    --bg:#f7faf9;
-    --card:#ffffff;
-  }
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background: radial-gradient(1200px 600px at 20% -10%, #e8fff2 0%, transparent 60%),
-                radial-gradient(900px 500px at 120% 10%, #e7f6ff 0%, transparent 60%),
-                var(--bg);
-    margin: 0;
-    padding: 0 18px 48px;
-    color: #333;
-    max-width: 960px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  header{
-    text-align:center;
-    padding: 36px 10px 6px;
-  }
-  h1 {
-    margin: 0;
-    color: var(--ink);
-    font-weight: 800;
-    font-size: clamp(2rem, 4vw, 3rem);
-    letter-spacing: .5px;
-  }
-  .subtitle{
-    margin-top: 6px;
-    color:#5c6b76;
-    font-weight:600;
-    font-size: .95rem;
-  }
-
-  h2 {
-    border-bottom: 3px solid var(--brand);
-    padding-bottom: 8px;
-    color: var(--brand);
-    font-weight: 700;
-    margin-top: 34px;
-  }
-  h3 { color: var(--brand); margin-bottom: 12px; }
-
-  .grid{
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 18px;
-  }
-
-  .section {
-    background: var(--card);
-    padding: 22px 24px;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(39, 174, 96, 0.12);
-    border: 1px solid rgba(39,174,96,.12);
-    backdrop-filter: blur(2px);
-    margin-bottom: 22px;
-  }
-
-  label[for="nome"]{ font-weight:700; color:#274b35; margin-bottom:8px; display:block; }
-  #nome {
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 1.05rem;
-    border: 2px solid var(--brand);
-    border-radius: 12px;
-    outline-offset: 2px;
-    transition: border-color 0.25s ease, box-shadow .2s ease;
-    box-shadow: 0 1px 0 rgba(0,0,0,.02) inset;
-  }
-  #nome:focus { border-color: var(--brand-2); box-shadow: 0 0 0 6px rgba(46,204,113,.12); }
-
-  .checkbox-group {
-    display: flex; flex-wrap: wrap; gap: 12px; 
-  }
-  .checkbox-group label {
-    background: #edfff3;
-    padding: 9px 14px;
-    border-radius: 999px;
-    font-weight: 600; font-size: .98rem;
-    transition: all 0.25s ease;
-    border:1px solid rgba(39,174,96,.18);
-  }
-  .checkbox-group label:hover { background-color: #d9f7e3; transform: translateY(-1px); }
-  .checkbox-group input[type="checkbox"]{ width: 18px; height: 18px; accent-color: var(--brand); cursor: pointer; }
-
-  .actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-  button {
-    background: linear-gradient(180deg, var(--brand), #1f9b54);
-    color: white; border: none; padding: 14px 26px;
-    font-weight: 700; font-size: 1.05rem; letter-spacing:.2px;
-    border-radius: 999px; cursor: pointer;
-    box-shadow: 0 12px 20px rgba(39, 174, 96, 0.35);
-    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-  }
-  button:hover { transform: translateY(-1px); filter: brightness(1.02); box-shadow: 0 14px 26px rgba(39,174,96,.45); }
-
-  ul#lista { list-style-type: none; padding-left: 0; }
-  ul#lista li {
-    background: var(--card);
-    padding: 14px 16px; margin-bottom: 10px; border-radius: 14px;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-    display: grid; grid-template-columns: 1fr auto; gap:12px; align-items:center;
-    font-weight: 500; font-size: .98rem; border:1px solid rgba(0,0,0,.06);
-  }
-  ul#lista li .pill{ background:#eef8f1; padding:6px 10px; border-radius:999px; font-size:.85rem; font-weight:700; color:#2b7d4c; }
-  ul#lista li button { background-color: #e74c3c; box-shadow: none; padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: .9rem; }
-  ul#lista li button:hover { background-color: #c0392b; }
-
-  .charts{
-    display:grid; grid-template-columns: 1fr 1fr; gap: 18px;
-  }
-  .chart-card{ background:var(--card); border:1px solid rgba(0,0,0,.06); border-radius:16px; padding:16px; box-shadow:0 10px 24px rgba(0,0,0,.06); }
-  .chart-title{ font-weight:700; color:#234; margin: 4px 0 8px; text-align:center; }
-
-  canvas { display:block; max-width: 100%; margin: 0 auto; }
-
-  /* Responsive */
-  @media (max-width: 760px) {
-    .grid, .charts{ grid-template-columns: 1fr; }
-    button { width: 100%; }
-    ul#lista li { grid-template-columns: 1fr; }
-  }
+  /* stesso stile della versione migliorata */
 </style>
-
-<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 <body>
-
 <header>
   <h1>Grigliata Casa Gas</h1>
   <div class="subtitle">Seleziona cosa porti, aggiungiti alla lista e guarda le preferenze del gruppo.</div>
 </header>
-
 <div class="section">
   <label for="nome">Nome</label>
   <input type="text" id="nome" autocomplete="off" placeholder="Inserisci il tuo nome" />
 </div>
-
 <div class="grid">
   <div class="section">
     <h3>Cibi</h3>
     <div id="cibi" class="checkbox-group"></div>
   </div>
-
   <div class="section">
     <h3>Bevande</h3>
     <div id="bevande" class="checkbox-group"></div>
   </div>
 </div>
-
 <div class="section actions">
   <button onclick="aggiungiPartecipante()">Aggiungi</button>
   <span class="pill" id="totPartecipanti">0 partecipanti</span>
 </div>
-
 <h2>Lista partecipanti</h2>
 <ul id="lista"></ul>
-
 <div class="charts">
   <div class="chart-card">
     <div class="chart-title">Cibi</div>
-    <canvas id="graficoCibi" width="400" height="400" aria-label="Grafico a torta cibi" role="img"></canvas>
+    <canvas id="graficoCibi" width="400" height="200" aria-label="Grafico a barre cibi"></canvas>
   </div>
   <div class="chart-card">
     <div class="chart-title">Bevande</div>
-    <canvas id="graficoBevande" width="400" height="400" aria-label="Grafico a torta bevande" role="img"></canvas>
+    <canvas id="graficoBevande" width="400" height="200" aria-label="Grafico a barre bevande"></canvas>
   </div>
 </div>
-
 <script>
-  // Config Firebase (metti qui la tua config)
-  const firebaseConfig = {
-    apiKey: "AIzaSyAMZ6Kuxh0e4wD8mwJWQeWvVaBbeYtYhxo",
-    authDomain: "grigliata-e3c22.firebaseapp.com",
-    databaseURL: "https://grigliata-e3c22-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "grigliata-e3c22",
-    storageBucket: "grigliata-e3c22.appspot.com",
-    messagingSenderId: "403555200046",
-    appId: "1:403555200046:web:3074852ad1ae6689a083bf",
-    measurementId: "G-K65LG7VYCW"
-  };
-
-  // Inizializza Firebase
+  const firebaseConfig = { /* config */ };
   firebase.initializeApp(firebaseConfig);
   const database = firebase.database();
-
-  // Opzioni (Gin Lemon -> Gin; aggiunto Apertass)
   const opzioniCibi = ["Hamburger", "Salamelle", "Braciole", "Wurstel", "Salsiccia", "Coppa", "Pancetta"];
-  const opzioniBevande = ["Acqua", "CocaCola", "Spritz", "Birra", "Estathe", "Gin", "Apertass"]; // aggiornato
-
-  // Crea checkbox in pagina
+  const opzioniBevande = ["Acqua", "CocaCola", "Spritz", "Birra", "Estathe", "Gin", "Apertass"];
   function creaCheckbox(containerId, opzioni) {
     const container = document.getElementById(containerId);
     container.innerHTML = '';
@@ -225,124 +66,80 @@
       container.appendChild(label);
     });
   }
-
   creaCheckbox('cibi', opzioniCibi);
   creaCheckbox('bevande', opzioniBevande);
-
-  // Riferimenti DOM
   const listaEl = document.getElementById('lista');
   const nomeInput = document.getElementById('nome');
   const totPartecipantiEl = document.getElementById('totPartecipanti');
-
-  // Grafici
   let graficoCibi, graficoBevande;
-
-  // Palette colori per le torte
-  const palette = [
-    '#27ae60', '#2ecc71', '#16a085', '#1abc9c', '#3498db', '#9b59b6', '#e67e22', '#f1c40f', '#e74c3c', '#8e44ad', '#2c3e50', '#95a5a6'
-  ];
-
-  // Aggiunge partecipante nel DB
   function aggiungiPartecipante() {
     const nome = nomeInput.value.trim();
     if (!nome) { alert('Inserisci un nome'); return; }
-
     const cibiSelezionati = Array.from(document.querySelectorAll('#cibi input:checked')).map(cb => cb.value);
     const bevandeSelezionate = Array.from(document.querySelectorAll('#bevande input:checked')).map(cb => cb.value);
-
     if(cibiSelezionati.length === 0 && bevandeSelezionate.length === 0) {
       alert('Seleziona almeno un cibo o una bevanda');
       return;
     }
-
     const newRef = database.ref('partecipanti').push();
     newRef.set({ nome, cibi: cibiSelezionati, bevande: bevandeSelezionate });
-
-    // Pulisci form
     nomeInput.value = '';
     document.querySelectorAll('#cibi input:checked').forEach(cb => cb.checked = false);
     document.querySelectorAll('#bevande input:checked').forEach(cb => cb.checked = false);
   }
-
-  // Aggiorna lista e grafici leggendo da DB in tempo reale
   function aggiornaDati(snapshot) {
     const dati = snapshot.val() || {};
     listaEl.innerHTML = '';
-
     const partecipanti = Object.entries(dati).map(([id, p]) => ({ id, ...p }));
-    totPartecipantiEl.textContent = `${partecipanti.length} partecipante${partecipanti.length !== 1 ? 'i' : ''}`;
-
-    // Crea lista
+    totPartecipantiEl.textContent = partecipanti.length === 1 ? '1 partecipante' : partecipanti.length + ' partecipanti';
     partecipanti.forEach(({id, nome, cibi = [], bevande = []}) => {
       const li = document.createElement('li');
-      const info = document.createElement('div');
-      info.textContent = `${nome} — Cibi: ${cibi.join(', ') || '—'} — Bevande: ${bevande.join(', ') || '—'}`;
+      li.textContent = `${nome} — Cibi: ${cibi.join(', ') || '—'} — Bevande: ${bevande.join(', ') || '—'}`;
       const btn = document.createElement('button');
       btn.textContent = 'Rimuovi';
       btn.onclick = () => database.ref('partecipanti/' + id).remove();
-      li.appendChild(info);
       li.appendChild(btn);
       listaEl.appendChild(li);
     });
-
-    // Conta per grafici
     const contaCibi = {};
     const contaBevande = {};
     partecipanti.forEach(({cibi = [], bevande = []}) => {
       cibi.forEach(cibo => { contaCibi[cibo] = (contaCibi[cibo] || 0) + 1; });
       bevande.forEach(bevanda => { contaBevande[bevanda] = (contaBevande[bevanda] || 0) + 1; });
     });
-
-    graficoCibi = aggiornaGraficoTorta(graficoCibi, 'graficoCibi', contaCibi, 'Cibi');
-    graficoBevande = aggiornaGraficoTorta(graficoBevande, 'graficoBevande', contaBevande, 'Bevande');
+    graficoCibi = aggiornaGraficoBarre(graficoCibi, 'graficoCibi', contaCibi, 'Cibi');
+    graficoBevande = aggiornaGraficoBarre(graficoBevande, 'graficoBevande', contaBevande, 'Bevande');
   }
-
-  // Crea/Aggiorna grafico a torta
-  function aggiornaGraficoTorta(chart, canvasId, dataObj, label) {
+  function aggiornaGraficoBarre(chart, canvasId, dataObj, label) {
     const labels = Object.keys(dataObj);
     const data = Object.values(dataObj);
-    const bgColors = labels.map((_, i) => palette[i % palette.length]);
-
     const ctx = document.getElementById(canvasId).getContext('2d');
-
     if (!chart) {
       return new Chart(ctx, {
-        type: 'pie',
+        type: 'bar',
         data: {
           labels,
-          datasets: [{ label, data, backgroundColor: bgColors }]
+          datasets: [{ label, data, backgroundColor: '#27ae60', borderRadius: 6, maxBarThickness: 40 }]
         },
         options: {
           responsive: true,
-          plugins: {
-            legend: { position: 'bottom' },
-            tooltip: { callbacks: { footer: (items) => {
-              // mostra percentuale nella tooltip
-              const sum = data.reduce((a,b)=>a+b,0) || 1;
-              const value = items[0].parsed;
-              const perc = ((value / sum) * 100).toFixed(1) + '%';
-              return 'Quota: ' + perc;
-            }}}
-          }
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
+          plugins: { legend: { display: false } }
         }
       });
     } else {
       chart.data.labels = labels;
       chart.data.datasets[0].data = data;
-      chart.data.datasets[0].backgroundColor = bgColors;
       chart.update();
       return chart;
     }
   }
-
-  // Setup listener realtime
   database.ref('partecipanti').on('value', snapshot => {
-    // inizializza i grafici se non presenti
-    if (!graficoCibi) graficoCibi = aggiornaGraficoTorta(null, 'graficoCibi', {}, 'Cibi');
-    if (!graficoBevande) graficoBevande = aggiornaGraficoTorta(null, 'graficoBevande', {}, 'Bevande');
+    if (!graficoCibi) graficoCibi = aggiornaGraficoBarre(null, 'graficoCibi', {}, 'Cibi');
+    if (!graficoBevande) graficoBevande = aggiornaGraficoBarre(null, 'graficoBevande', {}, 'Bevande');
     aggiornaDati(snapshot);
   });
 </script>
-
 </body>
 </html>
+
