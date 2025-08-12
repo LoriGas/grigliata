@@ -5,18 +5,168 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Grigliata Casa Gas - Con Firebase</title>
 
-<!-- Stili base -->
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+
 <style>
-  body { font-family: Arial, sans-serif; margin: 20px; max-width: 600px; margin-left: auto; margin-right: auto; }
-  h1 { text-align: center; }
-  .section { margin-bottom: 20px; }
-  .checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
-  label { display: flex; align-items: center; gap: 5px; }
-  ul { padding-left: 20px; }
-  li { margin-bottom: 10px; }
-  button { margin-left: 10px; cursor: pointer; }
+  /* Reset base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #f9f9f9;
+    margin: 0;
+    padding: 0 15px 40px;
+    color: #333;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  h1 {
+    text-align: center;
+    margin-top: 30px;
+    color: #2c3e50;
+    font-weight: 600;
+    font-size: 2.8rem;
+    letter-spacing: 1px;
+  }
+  h2 {
+    border-bottom: 3px solid #27ae60;
+    padding-bottom: 8px;
+    color: #27ae60;
+    font-weight: 600;
+    margin-top: 40px;
+  }
+  h3 {
+    color: #27ae60;
+    margin-bottom: 10px;
+  }
+
+  .section {
+    background: #fff;
+    padding: 20px 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgb(39 174 96 / 0.1);
+    margin-bottom: 30px;
+  }
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 500;
+    color: #444;
+  }
+  label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #27ae60;
+    cursor: pointer;
+  }
+  #nome {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 1.1rem;
+    border: 2px solid #27ae60;
+    border-radius: 8px;
+    outline-offset: 2px;
+    transition: border-color 0.3s ease;
+  }
+  #nome:focus {
+    border-color: #2ecc71;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .checkbox-group label {
+    background: #e6f5ea;
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+  }
+  .checkbox-group label:hover {
+    background-color: #c8e6c9;
+  }
+
+  button {
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    font-weight: 600;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgb(39 174 96 / 0.5);
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 0 auto 40px;
+    width: fit-content;
+  }
+  button:hover {
+    background-color: #2ecc71;
+  }
+
+  ul#lista {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  ul#lista li {
+    background: #fff;
+    padding: 15px 20px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgb(0 0 0 / 0.07);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  ul#lista li button {
+    background-color: #e74c3c;
+    box-shadow: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: background-color 0.25s ease;
+  }
+  ul#lista li button:hover {
+    background-color: #c0392b;
+  }
+
+  canvas {
+    display: block;
+    max-width: 100%;
+    margin: 20px auto 40px;
+  }
+
+  /* Responsive */
   @media (max-width: 480px) {
-    .checkbox-group { flex-direction: column; }
+    .checkbox-group {
+      flex-direction: column;
+      gap: 10px;
+    }
+    button {
+      width: 100%;
+    }
+    ul#lista li {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    ul#lista li button {
+      align-self: flex-end;
+    }
   }
 </style>
 
@@ -33,7 +183,8 @@
 <h1>Grigliata Casa Gas</h1>
 
 <div class="section">
-  <label>Nome: <input type="text" id="nome" autocomplete="off" /></label>
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" autocomplete="off" placeholder="Inserisci il tuo nome" />
 </div>
 
 <div class="section">
@@ -78,6 +229,7 @@
   // Crea checkbox in pagina
   function creaCheckbox(containerId, opzioni) {
     const container = document.getElementById(containerId);
+    container.innerHTML = ''; // reset in caso
     opzioni.forEach(opt => {
       const label = document.createElement('label');
       const checkbox = document.createElement('input');
@@ -152,54 +304,68 @@
     // Conta per grafici
     const contaCibi = {};
     const contaBevande = {};
-
     partecipanti.forEach(({cibi, bevande}) => {
-      cibi.forEach(c => contaCibi[c] = (contaCibi[c] || 0) + 1);
-      bevande.forEach(b => contaBevande[b] = (contaBevande[b] || 0) + 1);
+      cibi.forEach(cibo => {
+        contaCibi[cibo] = (contaCibi[cibo] || 0) + 1;
+      });
+      bevande.forEach(bevanda => {
+        contaBevande[bevanda] = (contaBevande[bevanda] || 0) + 1;
+      });
     });
 
-    aggiornaGrafici(contaCibi, contaBevande);
+    aggiornaGrafico(graficoCibi, contaCibi, 'Cibi');
+    aggiornaGrafico(graficoBevande, contaBevande, 'Bevande');
   }
 
-  // Funzione per aggiornare i grafici
-  function aggiornaGrafici(contaCibi, contaBevande) {
-    const coloriCibi = generaColori(Object.keys(contaCibi).length);
-    const coloriBevande = generaColori(Object.keys(contaBevande).length);
-
-    if(graficoCibi) graficoCibi.destroy();
-    if(graficoBevande) graficoBevande.destroy();
-
-    graficoCibi = new Chart(document.getElementById('graficoCibi'), {
-      type: 'pie',
-      data: {
-        labels: Object.keys(contaCibi),
-        datasets: [{
-          data: Object.values(contaCibi),
-          backgroundColor: coloriCibi
-        }]
-      }
-    });
-
-    graficoBevande = new Chart(document.getElementById('graficoBevande'), {
-      type: 'pie',
-      data: {
-        labels: Object.keys(contaBevande),
-        datasets: [{
-          data: Object.values(contaBevande),
-          backgroundColor: coloriBevande
-        }]
-      }
-    });
+  // Funzione per creare o aggiornare un grafico
+  function aggiornaGrafico(chart, dataObj, label) {
+    const labels = Object.keys(dataObj);
+    const data = Object.values(dataObj);
+    if (!chart) {
+      const ctx = label === 'Cibi' ? document.getElementById('graficoCibi').getContext('2d') : document.getElementById('graficoBevande').getContext('2d');
+      return new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels,
+          datasets: [{
+            label: label,
+            data,
+            backgroundColor: '#27ae60',
+            borderRadius: 6,
+            maxBarThickness: 40,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                stepSize: 1
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    } else {
+      chart.data.labels = labels;
+      chart.data.datasets[0].data = data;
+      chart.update();
+      return chart;
+    }
   }
 
-  // Genera colori casuali
-  function generaColori(n) {
-    return Array.from({ length: n }, () => `hsl(${Math.random() * 360}, 70%, 60%)`);
-  }
-
-  // Ascolta cambiamenti in realtime sul DB
-  database.ref('partecipanti').on('value', aggiornaDati);
-
+  // Setup listener realtime
+  database.ref('partecipanti').on('value', snapshot => {
+    graficoCibi = aggiornaGrafico(graficoCibi, {}, 'Cibi');
+    graficoBevande = aggiornaGrafico(graficoBevande, {}, 'Bevande');
+    aggiornaDati(snapshot);
+  });
 </script>
 
 </body>
