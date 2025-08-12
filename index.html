@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizza la Grigliata</title>
+    <title>Grigliata Casa Gas</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,25 +55,43 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 10px;
         }
+        .charts {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        canvas {
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
-    <h1>Organizza la Grigliata 🍖</h1>
+    <h1>Grigliata Casa Gas 🍖</h1>
     <form id="grigliataForm">
         <input type="text" id="nome" placeholder="Il tuo nome" required>
         <select id="cibo" required>
             <option value="">-- Seleziona il cibo preferito --</option>
-            <option>Carne</option>
-            <option>Pesce</option>
-            <option>Verdure</option>
-            <option>Formaggi</option>
+            <option>Hamburger</option>
+            <option>Salamelle</option>
+            <option>Braciole</option>
+            <option>Wurstel</option>
+            <option>Salsiccia</option>
+            <option>Coppa</option>
+            <option>Pancetta</option>
         </select>
         <select id="bevanda" required>
             <option value="">-- Seleziona la bevanda preferita --</option>
-            <option>Birra</option>
-            <option>Vino</option>
             <option>Acqua</option>
-            <option>Analcolici</option>
+            <option>Coca-Cola</option>
+            <option>Spritz</option>
+            <option>Birra</option>
+            <option>Estathé</option>
+            <option>Gin Lemon</option>
         </select>
         <button type="submit">Partecipa</button>
     </form>
@@ -81,9 +100,52 @@
         <h2>Partecipanti</h2>
     </div>
 
+    <div class="charts">
+        <div>
+            <h3>Cibi</h3>
+            <canvas id="chartCibi" width="200" height="200"></canvas>
+        </div>
+        <div>
+            <h3>Bevande</h3>
+            <canvas id="chartBevande" width="200" height="200"></canvas>
+        </div>
+    </div>
+
     <script>
         const form = document.getElementById('grigliataForm');
         const lista = document.getElementById('listaPartecipanti');
+
+        let datiCibi = {"Hamburger": 0, "Salamelle": 0, "Braciole": 0, "Wurstel": 0, "Salsiccia": 0, "Coppa": 0, "Pancetta": 0};
+        let datiBevande = {"Acqua": 0, "Coca-Cola": 0, "Spritz": 0, "Birra": 0, "Estathé": 0, "Gin Lemon": 0};
+
+        const chartCibi = new Chart(document.getElementById('chartCibi'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(datiCibi),
+                datasets: [{
+                    data: Object.values(datiCibi),
+                    backgroundColor: ['#ff9999','#ffcc99','#99ff99','#9999ff','#ffb3e6','#c2c2f0','#ffccff']
+                }]
+            }
+        });
+
+        const chartBevande = new Chart(document.getElementById('chartBevande'), {
+            type: 'pie',
+            data: {
+                labels: Object.keys(datiBevande),
+                datasets: [{
+                    data: Object.values(datiBevande),
+                    backgroundColor: ['#66b3ff','#ffb366','#b366ff','#66ffb3','#ffd966','#ff6666']
+                }]
+            }
+        });
+
+        function aggiornaGrafici() {
+            chartCibi.data.datasets[0].data = Object.values(datiCibi);
+            chartBevande.data.datasets[0].data = Object.values(datiBevande);
+            chartCibi.update();
+            chartBevande.update();
+        }
 
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -97,6 +159,10 @@
             card.innerHTML = `<strong>${nome}</strong> - Cibo: ${cibo}, Bevanda: ${bevanda}`;
 
             lista.appendChild(card);
+
+            datiCibi[cibo]++;
+            datiBevande[bevanda]++;
+            aggiornaGrafici();
 
             form.reset();
         });
