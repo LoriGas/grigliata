@@ -29,6 +29,9 @@
             border: 1px solid #ccc;
             font-size: 1em;
         }
+        select[multiple] {
+            height: 120px;
+        }
         button {
             background-color: #e67300;
             color: white;
@@ -54,6 +57,9 @@
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .charts {
             display: flex;
@@ -68,14 +74,21 @@
             border-radius: 10px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Grigliata Casa Gas 🍖</h1>
     <form id="grigliataForm">
         <input type="text" id="nome" placeholder="Il tuo nome" required>
-        <select id="cibo" required>
-            <option value="">-- Seleziona il cibo preferito --</option>
+        <select id="cibo" multiple required>
             <option>Hamburger</option>
             <option>Salamelle</option>
             <option>Braciole</option>
@@ -84,8 +97,7 @@
             <option>Coppa</option>
             <option>Pancetta</option>
         </select>
-        <select id="bevanda" required>
-            <option value="">-- Seleziona la bevanda preferita --</option>
+        <select id="bevanda" multiple required>
             <option>Acqua</option>
             <option>Coca-Cola</option>
             <option>Spritz</option>
@@ -112,11 +124,9 @@
     </div>
 
     <script>
-        const form = document.getElementById('grigliataForm');
-        const lista = document.getElementById('listaPartecipanti');
-
-        let datiCibi = {"Hamburger": 0, "Salamelle": 0, "Braciole": 0, "Wurstel": 0, "Salsiccia": 0, "Coppa": 0, "Pancetta": 0};
-        let datiBevande = {"Acqua": 0, "Coca-Cola": 0, "Spritz": 0, "Birra": 0, "Estathé": 0, "Gin Lemon": 0};
+        let datiCibi = JSON.parse(localStorage.getItem('datiCibi')) || {"Hamburger": 0, "Salamelle": 0, "Braciole": 0, "Wurstel": 0, "Salsiccia": 0, "Coppa": 0, "Pancetta": 0};
+        let datiBevande = JSON.parse(localStorage.getItem('datiBevande')) || {"Acqua": 0, "Coca-Cola": 0, "Spritz": 0, "Birra": 0, "Estathé": 0, "Gin Lemon": 0};
+        let partecipanti = JSON.parse(localStorage.getItem('partecipanti')) || [];
 
         const chartCibi = new Chart(document.getElementById('chartCibi'), {
             type: 'pie',
@@ -147,25 +157,53 @@
             chartBevande.update();
         }
 
-        form.addEventListener('submit', function(e) {
+        function salvaDati() {
+            localStorage.setItem('datiCibi', JSON.stringify(datiCibi));
+            localStorage.setItem('datiBevande', JSON.stringify(datiBevande));
+            localStorage.setItem('partecipanti', JSON.stringify(partecipanti));
+        }
+
+        function mostraPartecipanti() {
+            const lista = document.getElementById('listaPartecipanti');
+            lista.innerHTML = '<h2>Partecipanti</h2>';
+            partecipanti.forEach((p, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.innerHTML = `<span><strong>${p.nome}</strong> - Cibi: ${p.cibi.join(', ')} | Bevande: ${p.bevande.join(', ')}</span>`;
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '❌';
+                delBtn.classList.add('delete-btn');
+                delBtn.onclick = () => {
+                    p.cibi.forEach(c => datiCibi[c]--);
+                    p.bevande.forEach(b => datiBevande[b]--);
+                    partecipanti.splice(index, 1);
+                    salvaDati();
+                    aggiornaGrafici();
+                    mostraPartecipanti();
+                };
+                card.appendChild(delBtn);
+                lista.appendChild(card);
+            });
+        }
+
+        document.getElementById('grigliataForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const nome = document.getElementById('nome').value;
-            const cibo = document.getElementById('cibo').value;
-            const bevanda = document.getElementById('bevanda').value;
+            const cibiSelezionati = Array.from(document.getElementById('cibo').selectedOptions).map(o => o.value);
+            const bevandeSelezionate = Array.from(document.getElementById('bevanda').selectedOptions).map(o => o.value);
 
-            const card = document.createElement('div');
-            card.classList.add('card');
-            card.innerHTML = `<strong>${nome}</strong> - Cibo: ${cibo}, Bevanda: ${bevanda}`;
+            cibiSelezionati.forEach(c => datiCibi[c]++);
+            bevandeSelezionate.forEach(b => datiBevande[b]++);
+            partecipanti.push({ nome, cibi: cibiSelezionati, bevande: bevandeSelezionate });
 
-            lista.appendChild(card);
-
-            datiCibi[cibo]++;
-            datiBevande[bevanda]++;
+            salvaDati();
             aggiornaGrafici();
-
-            form.reset();
+            mostraPartecipanti();
+            this.reset();
         });
+
+        mostraPartecipanti();
+        aggiornaGrafici();
     </script>
 </body>
 </html>
